@@ -1,3 +1,37 @@
+#from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from dotenv import load_dotenv
+import pymysql
+import os
+
+
+load_dotenv()
+
+
+def get_db_connection():
+    return pymysql.connect(
+        db=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
+        charset=os.getenv("DB_CHARSET"),
+        connect_timeout=int(os.getenv("DB_TIMEOUT")),
+        read_timeout=int(os.getenv("DB_TIMEOUT")),
+        write_timeout=int(os.getenv("DB_TIMEOUT")),
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
+def show_tables():
+    connection = get_db_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SHOW TABLES")
+        tables=cursor.fetchall()
+        return tables
+    finally:
+        connection.close()
+    
+
 def authenticate_user(user, pas):
     if user.lower() in ["john","jane","brown","emily","david"] and pas == "":
         return True
@@ -18,6 +52,7 @@ def ai_bot(choice, user):
 
 
 if __name__ == "__main__":
+    print(show_tables())
     print("\t\t\t\tTeleco AI bot")
     user=input("Enter your user name: ")
     pas=input("Enter your password: ")
