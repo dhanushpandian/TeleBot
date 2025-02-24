@@ -1,20 +1,40 @@
-from cryptography.fernet import Fernet
+def encrypt(text, shift):
+    result = ""
+    for i in range(shift):
+        result += text[i::shift]  # Taking every shift-th character
+    return result
 
-key = Fernet.generate_key()
+def decrypt(text, shift):
+    length = len(text)
+    rows = [''] * shift
+    index = 0
 
-key="KZvURnbM6cFEsMBuRN6q-IIuTIJv-vRCt3wgcFtDV2E="
+    # Calculate the length of each rail (row)
+    rail_lengths = [0] * shift
+    for i in range(length):
+        rail_lengths[i % shift] += 1
 
-cipher_suite = Fernet(key)
+    # Split text into rails
+    start = 0
+    for i in range(shift):
+        rows[i] = text[start:start + rail_lengths[i]]
+        start += rail_lengths[i]
 
-print(f"Key: {key}")
-print(f"Cipher Suite: {cipher_suite}")
+    # Reconstruct the original order
+    result = []
+    indices = [0] * shift
+    for i in range(length):
+        row = i % shift
+        result.append(rows[row][indices[row]])
+        indices[row] += 1
 
-#text = b"Hello, World!"
-#encrypted_text = ""
-text=b'gAAAAABnu0jDYCfoGoIZNkUrGh4kZlHDtaqtIPlbWCcLEhcvswTw5j36E8R-sYrb5kTL8giRyJgM2lWGsshyyBNc03CadeMVs7L7BRBWYDP3byEoV8xw8zild2yAFgtF75wQjrvNthbHKjhlUxNLSxhPswCHlH1c5BSSQmwno_wzSSWzhTsJRrXP1G67AwquQa2OgA-OXqN99td_U4v6q5DVDt8J9DSFR-IGfW-ItSnZL4PIMBLVXUBmjH4ebapPtCUJWtXirOrudoyNbM3zgi3XM4bdRnVBVDhniCEBBWXgJvc9x8x6kzQ='
-# encrypted_text = cipher_suite.encrypt(text)
-# print(f"Encrypted text: {encrypted_text}")
+    return ''.join(result)
 
-# Decrypt the text
-decrypted_text = cipher_suite.decrypt(text)
-print(f"Decrypted text: {decrypted_text}")
+# Sample text
+a = """ """
+
+b = encrypt(a, 3)
+print("Encrypted:", b)
+
+c = decrypt(b, 3)
+print("Decrypted:", c)

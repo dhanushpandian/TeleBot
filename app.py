@@ -2,7 +2,8 @@
 from dotenv import load_dotenv
 import pymysql
 import os
-
+import requests
+from openai import OpenAI
 
 load_dotenv()
 
@@ -48,11 +49,30 @@ Q={
 
 def ai_bot(choice, user):
     print(user,Q[choice])
-
+    x=input("Describe your query : ")
+    f=open("schema.txt","r")
+    schema=f.read()
+    user_message = f"give me only the sql query for the data required for answering the question : {x} from the Schema to table: {schema}"
+    f.close()
+    client = OpenAI(
+	base_url="https://router.huggingface.co/novita",
+	api_key=os.getenv("API_KEY")
+    )
+    messages = [
+	{
+		"role": "user",
+		"content": user_message
+	}]
+    completion = client.chat.completions.create(
+	model="deepseek/deepseek-r1", 
+	messages=messages, 
+	max_tokens=500,
+)
+    print(completion.choices[0].message)
 
 
 if __name__ == "__main__":
-    print(show_tables())
+    #print(show_tables())
     print("\t\t\t\tTeleco AI bot")
     user=input("Enter your user name: ")
     pas=input("Enter your password: ")

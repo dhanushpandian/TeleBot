@@ -1,46 +1,61 @@
+-- Drop tables if they exist to avoid conflicts during multiple runs
+DROP TABLE IF EXISTS ServiceComplaints;
+DROP TABLE IF EXISTS Billing;
+DROP TABLE IF EXISTS DataUsage;
+DROP TABLE IF EXISTS CallRecords;
+DROP TABLE IF EXISTS Customers;
+
+-- Create Customers table
 CREATE TABLE Customers (
     customer_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    phone_number VARCHAR(15) UNIQUE,
-    email VARCHAR(100),
+    name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(15) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     address TEXT,
     registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Create CallRecords table
 CREATE TABLE CallRecords (
     call_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
+    customer_id INT NOT NULL,
     call_duration INT, -- in seconds
-    call_type ENUM('incoming', 'outgoing'),
-    call_cost DECIMAL(5,2),
+    call_type ENUM('incoming', 'outgoing') NOT NULL,
+    call_cost DECIMAL(5,2) NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
-);
-CREATE TABLE DataUsage (
-    usage_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    data_used_mb DECIMAL(8,2),
-    usage_date DATE,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
-);
-CREATE TABLE Billing (
-    bill_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    bill_amount DECIMAL(8,2),
-    payment_status ENUM('paid', 'pending', 'overdue'),
-    bill_date DATE,
-    due_date DATE,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
-);
-CREATE TABLE ServiceComplaints (
-    complaint_id INT PRIMARY KEY AUTO_INCREMENT,
-    customer_id INT,
-    issue_type ENUM('network', 'billing', 'service'),
-    complaint_text TEXT,
-    status ENUM('open', 'in progress', 'resolved'),
-    complaint_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
 );
 
+-- Create DataUsage table
+CREATE TABLE DataUsage (
+    usage_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    data_used_mb DECIMAL(8,2) NOT NULL,
+    usage_date DATE NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+);
+
+-- Create Billing table
+CREATE TABLE Billing (
+    bill_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    bill_amount DECIMAL(8,2) NOT NULL,
+    payment_status ENUM('paid', 'pending', 'overdue') NOT NULL,
+    bill_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+);
+
+-- Create ServiceComplaints table
+CREATE TABLE ServiceComplaints (
+    complaint_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    issue_type ENUM('network', 'billing', 'service') NOT NULL,
+    complaint_text TEXT NOT NULL,
+    status ENUM('open', 'in progress', 'resolved') NOT NULL,
+    complaint_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+);
 
 -- Insert sample customers
 INSERT INTO Customers (name, phone_number, email, address, registration_date) VALUES

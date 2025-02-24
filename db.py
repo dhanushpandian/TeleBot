@@ -18,7 +18,14 @@ connection = pymysql.connect(
   
 try:
   cursor = connection.cursor()
-  cursor.execute("show tables")
+  # f=open("sql.txt","r")
+  # sql=f.read()
+  # print(sql)
+  # a=sql.split(";")
+  # for i in range(len(a)-1):
+  #   print(a[i])
+  #   cursor.execute(a[i])
+  cursor.execute("select * from Customers;")
   print(cursor.fetchall())
 finally:
   connection.close()
