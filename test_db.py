@@ -1,11 +1,9 @@
+import pymysql
 import os
-import pymysql  
 from dotenv import load_dotenv
-
+timeout = 10
 load_dotenv()
-
-def get_db_connection():
-    return pymysql.connect(
+connection = pymysql.connect(
         db=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
@@ -16,18 +14,18 @@ def get_db_connection():
         read_timeout=int(os.getenv("DB_TIMEOUT")),
         write_timeout=int(os.getenv("DB_TIMEOUT")),
         cursorclass=pymysql.cursors.DictCursor
-    )
-
-
-
-def show_tables():
-    connection = get_db_connection()
-    try:
-        cursor = connection.cursor()
-        cursor.execute("SHOW TABLES")
-        tables=cursor.fetchall()
-        return tables
-    finally:
-        connection.close()
-
-print(show_tables())
+)
+  
+try:
+  cursor = connection.cursor()
+  # f=open("sql.txt","r")
+  # sql=f.read()
+  # print(sql)
+  # a=sql.split(";")
+  # for i in range(len(a)-1):
+  #   print(a[i])
+  #   cursor.execute(a[i])
+  cursor.execute("select * from Customers;")
+  print(cursor.fetchall())
+finally:
+  connection.close()

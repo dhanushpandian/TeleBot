@@ -1,40 +1,24 @@
-def encrypt(text, shift):
-    result = ""
-    for i in range(shift):
-        result += text[i::shift]  # Taking every shift-th character
-    return result
+import base64
+def xor_encrypt(text, key):
+    encrypted_bytes = bytearray([ord(c) ^ ord(key[i % len(key)]) for i, c in enumerate(text)])
+    return base64.b64encode(encrypted_bytes).decode('utf-8')
 
-def decrypt(text, shift):
-    length = len(text)
-    rows = [''] * shift
-    index = 0
+def xor_decrypt(encrypted_text, key):
+    encrypted_bytes = base64.b64decode(encrypted_text)
+    decrypted_text = ''.join(chr(b ^ ord(key[i % len(key)])) for i, b in enumerate(encrypted_bytes))
+    return decrypted_text
 
-    # Calculate the length of each rail (row)
-    rail_lengths = [0] * shift
-    for i in range(length):
-        rail_lengths[i % shift] += 1
+KEY = "mysecretkey"
 
-    # Split text into rails
-    start = 0
-    for i in range(shift):
-        rows[i] = text[start:start + rail_lengths[i]]
-        start += rail_lengths[i]
+text = """
 
-    # Reconstruct the original order
-    result = []
-    indices = [0] * shift
-    for i in range(length):
-        row = i % shift
-        result.append(rows[row][indices[row]])
-        indices[row] += 1
+"""
 
-    return ''.join(result)
+# encrypted_text = xor_encrypt(text, KEY)
+# print("Encrypted:", encrypted_text)
 
-# Sample text
-a = """ """
 
-b = encrypt(a, 3)
-print("Encrypted:", b)
+decrypted_text = xor_decrypt(text, KEY)
+print("Decrypted:", decrypted_text)
 
-c = decrypt(b, 3)
-print("Decrypted:", c)
+
