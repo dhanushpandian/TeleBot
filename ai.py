@@ -11,11 +11,13 @@ with open("Q_data.json", "r") as file:
 
 load_dotenv()
 
+file_path = os.path.join(os.path.dirname(__file__), "sql\sql.txt")
+
 def ai_bot(choice, user):
     print(user, Q[choice])
     x = input("Describe your query: ")
 
-    with open("TeleCo\sql.txt", "r") as f:
+    with open(file_path, "r") as f:
         schema = f.read()
 
     user_message = f"""
@@ -91,5 +93,5 @@ def ai_bot(choice, user):
         print("\n❌ **Error: Failed to fetch response from Gemini API**")
         return "Error: Failed to generate SQL query"
 
-# if __name__ == "__main__":
-#     print(ai_bot(1, "john"))
+if __name__ == "__main__":
+    print(ai_bot(1, "john"))

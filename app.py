@@ -16,8 +16,9 @@ def authenticate_user(user, pas):
 load_dotenv()
 
 if __name__ == "__main__":
-    #print(show_tables())
-    print("\t\t\t\tTeleco AI bot")
+    print("-"*100)
+    print("\t\t\t\t\tTeleco AI bot")
+    print("-"*100)
     user=input("Enter your user name: ")
     pas=input("Enter your password: ")
     if authenticate_user(user, pas):

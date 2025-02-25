@@ -30,4 +30,4 @@ def show_tables():
     finally:
         connection.close()
 
-print(show_tables())
+# print(show_tables())
